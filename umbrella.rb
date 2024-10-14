@@ -43,4 +43,5 @@ coords1 = Coords.new("merchandise mart chicago")
 weather1 = Weather.new(coords1.place, coords1.latitude, coords1.longitude)
 hourly = []
 hourly = weather1.temps
-pp Time.at(weather1.temps[0].fetch("time")).to_datetime
+hour = weather1.temps[0].fetch("time").to_s
+pp hourly[0]
