@@ -1,3 +1,4 @@
+require "active_support/all"
 require "http"
 require "json"
 require "date"
@@ -22,7 +23,7 @@ end
 
 class Weather
   attr_accessor :place, :latitude, :longitude, :weather_http, :weather_key
-  attr_reader :temps
+  attr_reader :temps, :request
   def initialize(place, latitude, longitude)
     @weather_http = "https://api.pirateweather.net/forecast/"
     @weather_key = ENV.fetch("PIRATE_WEATHER_API_KEY")
@@ -35,13 +36,14 @@ class Weather
     @parsed_response = JSON.parse(@raw_response)
     @data = @parsed_response.fetch("hourly").fetch("data")
     @temps = []
-    12.times { |i| @temps.push(@data[i - 1]) }
+    for i in 0..11
+      @temps.push(@data[i])
+    end
   end
 end
 
 coords1 = Coords.new("merchandise mart chicago")
 weather1 = Weather.new(coords1.place, coords1.latitude, coords1.longitude)
-hourly = []
-hourly = weather1.temps
-hour = weather1.temps[0].fetch("time").to_s
-pp hourly[0]
+time1 = weather1.temps[0].fetch("time")
+time = DateTime.strptime(time1.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M:%S %p")
+pp time
