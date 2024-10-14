@@ -4,27 +4,6 @@ require "json"
 require "date"
 require "ascii_charts"
 
-=begin
-class Coords
-  attr_accessor :place, :latitude, :longitude, :google_http
-  
-
-  def initialize(place)
-    @google_http = "https://maps.googleapis.com/maps/api/geocode/json?address="
-    @gmaps_key = ENV.fetch("GMAPS_KEY")
-    @place = place
-
-    @request = @google_http + @place.gsub(" ", "%20") + "&key=" + @gmaps_key
-    @raw_response = HTTP.get(@request)
-    @parsed_response = JSON.parse(@raw_response)
-    @geometry = @parsed_response.fetch("results")[0].fetch("geometry")
-    
-    @latitude = @geometry.fetch("location").fetch("lat")
-    @longitude = @geometry.fetch("location").fetch("lng")
-  end
-end
-=end
-
 class Weather
   attr_accessor :google_http, :weather_http
   
@@ -54,7 +33,7 @@ class Weather
     @weather_response = JSON.parse(@weather_raw_response)
 
     @current_time = @weather_response.fetch("currently").fetch("time")
-    @current_time = DateTime.strptime(@current_time.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M%p")
+    @current_time_edit = DateTime.strptime(@current_time.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M%p")
     @current_temp = @weather_response.fetch("currently").fetch("temperature")
     
     @data = @weather_response.fetch("hourly").fetch("data")
@@ -99,10 +78,9 @@ class Weather
       @precip_per = @precip_per.round(0)
       @plots.push([@time, @precip_per])
     end
-    puts AsciiCharts::Cartesian.new(@plots, :bar => true, :hide_zero => true).draw
+    puts AsciiCharts::Cartesian.new(@plots, :title => "Time vs Precipitation probability", :bar => true, :hide_zero => true).draw
   end
 
-  
   def start
     @border = "="*40
     puts @border
@@ -118,15 +96,20 @@ class Weather
     
     puts "Your coordinates are #{@coords[0]}, #{@coords[1]}"
     puts "It is currently #{@current_temp}°F"
+    
     @precip_per_next = @temps[1].fetch("precipProbability") * 100
     @precip_per_next = @precip_per_next.round(0)
     @precip_intensity_next = @temps[1].fetch("precipIntensity")
-    @precip_description = self.precip_description(@precip_intensity_next)
-    pp @precip_per_next
-    pp @precip_description
-    #self.display_forecast
+    @precip_description_next = self.precip_description(@precip_intensity_next)
+    @minute = DateTime.strptime(@current_time.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%M")
+    @minute_next = 60 - @minute.to_i
+    print "Next hour: "
+    puts @precip_per_next > 10? "Possible #{@precip_description_next} starting in #{@minute_next} min." : "No Rain."
+
+    self.display_forecast_chart
+    puts "You might want to take an umbrella!" if @precip_per_next > 10
   end
 end
 
-new_weather = Weather.new
-new_weather.start
+check_weather = Weather.new
+check_weather.start
