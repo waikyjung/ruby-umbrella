@@ -44,6 +44,13 @@ end
 
 coords1 = Coords.new("merchandise mart chicago")
 weather1 = Weather.new(coords1.place, coords1.latitude, coords1.longitude)
-time1 = weather1.temps[0].fetch("time")
-time = DateTime.strptime(time1.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M:%S %p")
-pp time
+
+for i in 0..11
+  time1 = weather1.temps[i].fetch("time")
+  time2 = DateTime.strptime(time1.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M:%S %p")
+  summary = weather1.temps[i].fetch("summary")
+  temperature = weather1.temps[i].fetch("temperature")
+  precipProbability = weather1.temps[i].fetch("precipProbability") * 100
+  precipProbability = precipProbability.round(0)
+  pp "#{time2} - #{summary} - #{temperature} degrees - #{precipProbability}% Percipitation"
+end
