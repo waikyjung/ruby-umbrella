@@ -95,7 +95,7 @@ class Weather
     puts "Where are you?"
     @location = gets.chomp.split.map(&:capitalize).join(" ")
     
-    puts "Checking the weather at #{@location}"
+    puts "Checking the weather at #{@location}...."
     @coords = get_coords(@location)
     @temps = get_temps(@coords)
     
