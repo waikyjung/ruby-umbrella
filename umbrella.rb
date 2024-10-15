@@ -7,10 +7,6 @@ require "ascii_charts"
 class Weather
   attr_accessor :google_http, :weather_http, :current_time_edit, :current_temp, :temps
   
-  def initialize
-    self.start
-  end
-
   def get_coords(place)
     @google_http = "https://maps.googleapis.com/maps/api/geocode/json?address="
     @gmaps_key = ENV.fetch("GMAPS_KEY")
@@ -18,13 +14,13 @@ class Weather
 
     @google_request = @google_http + @place.gsub(" ", "%20") + "&key=" + @gmaps_key
     @google_raw_response = HTTP.get(@google_request)
-    if @google_raw_response.code == 200
-      puts "#{@place} not found. Please restart and try again."
+    
+    @google_response = JSON.parse(@google_raw_response)
+    if @google_response.fetch("status") == "ZERO_RESULTS"
+      puts "#{place} not found. Please restart and try again."
       exit
     end
-    @google_response = JSON.parse(@google_raw_response)
     @geometry = @google_response.fetch("results")[0].fetch("geometry")
-    
     @latitude = @geometry.fetch("location").fetch("lat")
     @longitude = @geometry.fetch("location").fetch("lng")
     return [@latitude, @longitude]
@@ -120,3 +116,4 @@ class Weather
 end
 
 check_weather = Weather.new
+check_weather.start
