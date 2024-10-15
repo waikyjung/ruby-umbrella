@@ -35,6 +35,7 @@ class Weather
     @weather_request = @weather_http + @weather_key + "/" + @latitude.to_s + "," + @longitude.to_s
     @weather_raw_response = HTTP.get(@weather_request)
     @weather_response = JSON.parse(@weather_raw_response)
+    #pp @weather_request
 
     @current_time = @weather_response.fetch("currently").fetch("time")
     @current_time_edit = DateTime.strptime(@current_time.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%I:%M%p")
@@ -105,11 +106,13 @@ class Weather
     @precip_per_next = @precip_per_next.round(0)
     @precip_intensity_next = @temps[1].fetch("precipIntensity")
     @precip_description_next = self.precip_description(@precip_intensity_next)
+    @precip_description_next = "Rain" if @precip_description_next.length == 0
     @minute = DateTime.strptime(@current_time.to_s, "%s").in_time_zone("Central Time (US & Canada)").strftime("%M")
     @minute_next = 60 - @minute.to_i
     print "Next hour: "
-    puts @precip_per_next > 10? "Possible #{@precip_description_next} starting in #{@minute_next} min." : "No Rain."
+    puts @precip_per_next > 10 ? "Possible #{@precip_description_next} starting in #{@minute_next} min." : "No Rain."
 
+    #self.display_forecast
     self.display_forecast_chart
     puts "You might want to take an umbrella!" if @precip_per_next > 10
   end
