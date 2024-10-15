@@ -1,5 +1,5 @@
 # Introduction
-This is an weather application to 
+This is an weather application.
 
 ## Description
 This weather application will display a location's current coordinates, temperature, and chart of rain chance in the next 12 hours to see if they would need an umbrella.
