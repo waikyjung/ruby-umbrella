@@ -16,5 +16,5 @@ new_weather = Weather.new
 new_weather.start
 ```
 
-## Using the Program
+## Using the Application
 After starting, prompt the user for their location. Enter a location. Information about the location's coordinates, current temperature, and the next 12 hours of precipitation chance will be display. An message may prompt the user to bring an umbrella.
