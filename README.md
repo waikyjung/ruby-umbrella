@@ -9,7 +9,7 @@ This weather application will display a location's current coordinates, temperat
 You may need to install dependencies.
 To install dependencies:
 ```
-  bundle install
+bundle install
 ```
 
 To start the application:
