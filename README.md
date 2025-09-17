@@ -7,13 +7,7 @@ This weather application will display a location's current coordinates, temperat
 ## Starting the Application
 To start the application:
 ```
-ruby umbrella.rb
-```
-
-If the following is not at the bottom, type the code below to create a weather, then the weather with ".start":
-```
-new_weather = Weather.new
-new_weather.start
+ruby app.rb
 ```
 
 ## Using the Application
